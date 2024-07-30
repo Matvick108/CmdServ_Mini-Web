@@ -72,15 +72,30 @@
             const submitButton = form.querySelector('button[type="submit"]');
             const inputs = Array.from(form.elements).filter(e => e.type !== 'submit');
 
-            // Проверка заполненности всех полей
-            form.addEventListener('input', () => {
+            // Функция для проверки заполненности всех полей и снятия фокуса
+            const checkFormFilled = () => {
                 const allFilled = inputs.every(input => input.value.trim() !== '');
                 submitButton.disabled = !allFilled;
 
-                // Скрыть клавиатуру на мобильных устройствах, сняв фокус с последнего поля
                 if (allFilled) {
-                    document.activeElement.blur();
+                    document.activeElement.blur(); // Скрыть клавиатуру
                 }
+            };
+
+            // Навешивание обработчиков событий на все поля
+            inputs.forEach((input, index) => {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        } else {
+                            checkFormFilled();
+                        }
+                    }
+                });
+
+                input.addEventListener('input', checkFormFilled);
             });
 
             // Отправка данных в Telegram
@@ -127,14 +142,6 @@
                       console.error('Ошибка:', error);
                       alert('Ошибка отправки сообщения. 😞');
                   });
-            });
-
-            // Предотвращение отправки формы по Enter и переход на новую строку в textarea
-            document.getElementById('bot-documentation').addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.value += '\n';
-                }
             });
         });
     </script>
