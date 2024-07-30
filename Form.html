@@ -128,6 +128,14 @@
                       alert('Ошибка отправки сообщения. 😞');
                   });
             });
+
+            // Предотвращение отправки формы по Enter и переход на новую строку в textarea
+            document.getElementById('bot-documentation').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.value += '\n';
+                }
+            });
         });
     </script>
 </body>
